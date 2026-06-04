@@ -60,7 +60,7 @@ STRINGS = {
         "open_in_maps": "Open in Google Maps",
         "tips": "Tips",
         "download_pdf": "Download PDF",
-        "footer": "Built with Claude · [GitHub](https://github.com)",
+        "footer": "Built by Shiyun Ni · [GitHub](https://github.com/Teresa-shiyun/ai-travel-planner)",
         "demo_disclaimer": "Demo data — Paris 2-day student itinerary. Toggle Demo mode off and add an API key to plan any city.",
     },
     "zh": {
@@ -118,7 +118,7 @@ STRINGS = {
         "open_in_maps": "在 Google 地图打开",
         "tips": "贴士",
         "download_pdf": "下载 PDF",
-        "footer": "由 Claude 构建 · [GitHub](https://github.com)",
+        "footer": "Shiyun Ni 制作 · [GitHub](https://github.com/Teresa-shiyun/ai-travel-planner)",
         "demo_disclaimer": "演示数据 — 巴黎 2 天学生行程。关闭演示模式并填入 API key 即可规划任意城市。",
     },
 }

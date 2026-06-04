@@ -1,145 +1,104 @@
-# AI Travel Itinerary Planner
+# AI Travel Itinerary Planner / AI 旅行行程规划器
 
-> Generate personalized multi-day travel itineraries with budget estimates, restaurant picks, rainy-day alternatives, and downloadable PDFs — powered by Claude.
+## Overview / 项目简介
 
-A Streamlit web app that turns four inputs (city, days, budget, interests) into a structured day-by-day plan: morning/afternoon/evening attractions grouped by neighborhood, lunch and dinner picks, transit notes, a budget breakdown, and a one-click PDF export. Includes a **Student Mode** that biases toward free attractions, hostels, and cheap eats — built originally as a *Europe Weekend Trip Planner for Students*.
+AI Travel Itinerary Planner is a Streamlit app that generates multi-day travel plans from a few inputs: city, trip length, budget, interests and language. It includes a demo mode with a pre-built Paris itinerary, so the UI can be tested without an API key.
 
----
+AI 旅行行程规划器是一个 Streamlit 项目。用户输入城市、天数、预算、兴趣和语言后，应用会生成多天行程、预算拆分、餐厅建议、交通提示和 PDF 下载。项目内置巴黎行程 demo，不配置 API key 也可以体验主要界面。
 
-## Features
+## Why I Built This / 项目背景
 
-- **Structured day plans** — morning / lunch / afternoon / dinner / evening, grouped by neighborhood to avoid zig-zagging
-- **Budget breakdown** — accommodation, food, transport, attractions, misc — with delta vs. user budget
-- **Google Maps links** for every attraction
-- **Rainy-day alternatives** for outdoor stops
-- **Restaurant picks** with cuisine, price, and a one-line "why this place" note
-- **Student Mode** — toggles a low-budget bias (free museums, hostels, street food)
-- **PDF export** via ReportLab — recruiter-ready trip plan
-- **Multi-language** — UI and itinerary content in English or Simplified Chinese
-- **Demo Mode** — full UI works without an API key (pre-built Paris weekend itinerary), so you can try the app instantly
+I built this as a portfolio project to practise LLM application structure in Python: prompt design, schema validation, UI rendering and PDF export. The original use case was planning budget-friendly weekend trips for students in Europe.
 
----
+这个项目是我用 Python 练习 LLM 应用结构时做的作品集项目，重点包括 prompt 设计、结构化输出校验、Streamlit 页面展示和 PDF 导出。最初的场景是为学生规划欧洲周末低预算旅行。
 
-## Tech Stack
+## My Contributions / 我的工作
 
-| Layer | Choice | Why |
-|---|---|---|
-| Frontend + backend | **Streamlit** | Single-file UI, free hosting on Streamlit Cloud, fastest path to a working demo |
-| LLM | **Anthropic Claude** (`claude-sonnet-4-6` default, `opus-4-7` / `haiku-4-5` selectable) | Strong structured output, follows JSON schema reliably |
-| Validation | **Pydantic v2** | Type-safe parse of LLM JSON; catches malformed outputs before they hit the UI |
-| PDF | **ReportLab** | Pure-Python, no system dependencies |
-| Config | **python-dotenv** | Standard `.env` pattern for the API key |
+- Built the Streamlit UI with English and Chinese interface text.
+- Implemented demo mode with a fixed Paris itinerary for offline testing.
+- Designed Pydantic models for itinerary, day plan, places, meals and budget breakdown.
+- Built prompt templates for structured itinerary generation.
+- Added Anthropic API integration for live itinerary generation.
+- Implemented PDF export with ReportLab.
+- Added Google Maps links and rainy-day alternatives in the rendered plan.
 
----
+- 使用 Streamlit 搭建双语界面。
+- 实现 demo 模式，使用固定巴黎行程支持无 API key 演示。
+- 设计 Pydantic 数据模型，覆盖行程、每日计划、地点、餐食和预算拆分。
+- 编写结构化行程生成 prompt。
+- 接入 Anthropic API，用于实时生成行程。
+- 使用 ReportLab 实现 PDF 导出。
+- 在页面中展示 Google Maps 链接和雨天备选方案。
 
-## Quick Start
+## Tech Stack / 技术栈
+
+- Python
+- Streamlit
+- Anthropic SDK
+- Pydantic v2
+- ReportLab
+- python-dotenv
+
+## Features / 主要功能
+
+- Demo mode with a Paris student itinerary.
+- Live itinerary generation when an Anthropic API key is provided.
+- Inputs for city, days, budget, interests and student mode.
+- English and Simplified Chinese UI.
+- Structured day-by-day plan with morning, lunch, afternoon, dinner and evening sections.
+- Budget breakdown and comparison with the user's budget.
+- PDF export for the generated itinerary.
+
+## Results / 项目成果
+
+The app can run locally without external credentials in demo mode. With an API key, it can request a new itinerary and validate the model output before rendering it. The project demonstrates a complete small LLM workflow: input form, prompt construction, schema validation, UI rendering and export.
+
+项目可以在 demo 模式下本地运行，不需要外部密钥。配置 API key 后，可以生成新的行程，并在展示前用 Pydantic 校验模型输出。这个项目展示了一个小型 LLM 应用的完整流程：输入表单、prompt 构造、结构校验、页面渲染和文件导出。
+
+## How to Run / 如何运行
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-travel-planner.git
-cd ai-travel-planner
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Open http://localhost:8501 — the app launches in **Demo mode** (no API key required) showing a Paris 2-day student itinerary. Toggle Demo mode off in the sidebar to plan any city.
+Open the local Streamlit URL shown in the terminal. Demo mode is enabled by default.
 
-### Using the Claude API
+Optional `.env`:
 
-To generate live itineraries, you need an Anthropic API key:
-
-1. Get a key at [console.anthropic.com](https://console.anthropic.com)
-2. Either:
-   - paste it into the sidebar (kept in session memory only), or
-   - copy `.env.example` to `.env` and add the key there
-
-Cost per itinerary is roughly **$0.01–0.05** depending on the model — Sonnet 4.6 is the default sweet spot.
-
----
-
-## Architecture
-
-```
-ai-travel-planner/
-├── app.py                  # Streamlit UI — form inputs, day tabs, PDF download
-├── planner/
-│   ├── models.py           # Pydantic schema: Itinerary, DayPlan, Place, Meal, BudgetBreakdown
-│   ├── prompts.py          # System + user prompt templates
-│   ├── llm.py              # Claude API call + JSON parsing + schema validation
-│   ├── mock_data.py        # Pre-built Paris itinerary for Demo mode
-│   ├── pdf_export.py       # ReportLab PDF generation
-│   └── i18n.py             # English / Chinese UI strings
-├── requirements.txt
-├── .env.example
-└── README.md
+```bash
+ANTHROPIC_API_KEY=
 ```
 
-The pipeline:
+You can also paste the key in the sidebar for the current session only.
 
-1. User fills the form (city, days, budget, interests, student toggle, language)
-2. `prompts.build_user_prompt()` renders the request as a strict JSON-shape spec
-3. `llm.generate_itinerary()` calls Claude, strips any markdown fences, parses JSON
-4. `Itinerary.model_validate()` enforces the schema (raises `GenerationError` on mismatch)
-5. The Streamlit UI renders day tabs, a budget breakdown, Google Maps links, and a PDF download button
+也可以直接在侧边栏输入 API key，仅在当前会话中使用。
 
-Schema validation matters: LLMs occasionally drop a field or wrap output in markdown fences. Pydantic catches both at the boundary, so the UI never has to defend against malformed AI output.
+## Screenshots / Results Preview
 
----
+TODO: add screenshots for demo mode, generated day tabs and PDF download.
 
-## Example Output
+## Limitations / 当前限制
 
-For *Paris, 2 days, €250, art + history + cafes, student mode*:
+- The app is a planning helper, not a booking engine.
+- It does not query live hotel, flight, restaurant or availability data.
+- Place suggestions depend on the model response or the built-in demo itinerary.
+- Budget numbers are estimates and should be checked before travelling.
 
-```
-Day 1 — Classic Paris: Louvre & Latin Quarter
-  Morning:    Louvre Museum (€22, 3h, free for under-26 EU)
-  Lunch:      L'As du Fallafel (€10, Marais)
-  Afternoon:  Notre-Dame exterior + Shakespeare and Co + Latin Quarter walk
-  Dinner:     Le Petit Vendôme (€18, French bistro)
-  Transport:  All walking — central Paris is compact
+## Future Improvements / 后续改进
 
-Day 2 — Montmartre & the Seine
-  Morning:    Sacré-Cœur + Montmartre (€8 dome ticket)
-  Lunch:      Le Relais Gascon (€15, giant goat-cheese salads)
-  Afternoon:  Musée d'Orsay + Seine sunset walk
-  Dinner:     Bouillon Pigalle (€20, traditional French)
-  Evening:    Eiffel Tower from Trocadéro (free, hourly sparkle)
+- Add tests for Pydantic validation and prompt parsing.
+- Add a screenshot gallery to the README.
+- Add optional live place data if a suitable API is configured.
+- Save generated itineraries locally for comparison.
+- Improve PDF layout for longer trips.
 
-Budget: €250 (Accom €120 · Food €63 · Transit €17 · Attractions €46 · Misc €4)
+## What I Learned / 我的收获
 
-Tips:
-  - Under 26 EU resident? Most national museums are free. Bring ID.
-  - Buy a Navigo Easy card (€2 + €8.45/day) — way cheaper than singles.
-  - Skip Bateaux Mouches — the free Seine walk gives you the same view.
-```
+This project helped me practise controlling LLM output with schemas. The most important lesson was to validate model responses before they reach the UI, because even a good prompt can return an unexpected shape.
 
----
+这个项目让我练习了如何用数据模型约束 LLM 输出。最大的收获是：即使 prompt 写得比较清楚，也需要在进入 UI 前做结构校验，否则页面很容易被不稳定输出影响。
 
-## Design Notes
+## License / 许可证
 
-- **Demo mode is first-class**, not an afterthought. Recruiters can see the full UI, exports, and structure without me paying for their API calls.
-- **Schema-validated LLM output**. Every Claude response is parsed with Pydantic. Garbage in → clean error out, never a half-broken UI.
-- **Budget transparency**. The breakdown is shown vs. the user's stated budget with a colored delta — if Claude over-budgets, you see it immediately.
-- **Honest about limitations**. The app is a *plan generator*, not a booking engine. It uses Claude's training-data knowledge of restaurants and attractions; it does not query Google Places or live availability. Famous spots that closed last week may still appear. README ships with this disclaimer rather than hiding it.
-
----
-
-## Future Improvements
-
-- Live restaurant data via Google Places API (would replace the "famous spots that closed" caveat)
-- Real-time hotel/hostel pricing via Booking.com or Hostelworld API
-- Save itineraries to a database so users can revisit / share
-- Stripe-protected hosted version with API key abstracted away
-- Unit tests for the schema validator + a few golden-output tests for the prompt
-- Streaming generation so users see the itinerary build day-by-day
-
----
-
-## License
-
-MIT — see [LICENSE](LICENSE).
-
----
-
-## CV one-liner
-
-> Built an AI travel itinerary planner (Python / Streamlit / Claude API) that generates personalized multi-day routes, budget breakdowns, and downloadable trip plans from four user inputs. Pydantic-validated LLM output, multi-language UI, PDF export, runnable demo without an API key.
+MIT. See [LICENSE](LICENSE).
