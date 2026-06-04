@@ -76,7 +76,7 @@ You can also paste the key in the sidebar for the current session only.
 
 ## Screenshots / Results Preview
 
-TODO: add screenshots for demo mode, generated day tabs and PDF download.
+![AI Travel Itinerary Planner demo](docs/assets/ai-travel-planner-demo.png)
 
 ## Limitations / 当前限制
 
